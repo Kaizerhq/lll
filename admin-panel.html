@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Админ Панел</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #f0f4f8;
+    min-height: 100vh;
+    color: #333;
+  }
+
+  /* ── LOGIN ── */
+  #login-screen {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #4fc3c3 0%, #7b6eea 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .login-box {
+    background: #fff;
+    border-radius: 16px;
+    padding: 48px 40px;
+    width: 400px;
+    text-align: center;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+  .login-box h2 { font-size: 26px; font-weight: 700; margin-bottom: 28px; color: #222; }
+  .login-box input {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid #d0d7e2;
+    border-radius: 8px;
+    font-size: 15px;
+    margin-bottom: 14px;
+    outline: none;
+    background: #f5f7fa;
+    transition: border-color .2s;
+  }
+  .login-box input:focus { border-color: #7b6eea; background: #fff; }
+  .btn-login {
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(90deg, #6b7ff0, #a066e8);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: opacity .2s;
+  }
+  .btn-login:hover { opacity: .9; }
+  .login-error { color: #e53e3e; font-size: 13px; margin-top: 10px; display: none; }
+  .login-hint { font-size: 12px; color: #999; margin-bottom: 14px; }
+  .login-switch { margin-top: 12px; font-size: 13px; color: #888; }
+  .login-switch a { color: #7b6eea; cursor: pointer; text-decoration: underline; }
+  .login-success { color: #22c55e; font-size: 13px; margin-top: 10px; display: none; }
+  .role-badge { font-size: 11px; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+  .role-admin { background: #fef3c7; color: #d97706; }
+  .role-user  { background: #e0f2fe; color: #0284c7; }
+
+  /* ── ADMIN ── */
+  #admin-app { display: none; min-height: 100vh; background: #f5f7fa; }
+
+  /* PAGES */
+  .screen { display: none; }
+  .screen.active { display: block; }
+
+  /* ── DASHBOARD ── */
+  .dashboard-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f5f7fa;
+  }
+  .dashboard-box {
+    background: #fff;
+    border-radius: 16px;
+    padding: 48px 56px;
+    text-align: center;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+    min-width: 320px;
+  }
+  .dashboard-box h2 { font-size: 26px; font-weight: 700; margin-bottom: 28px; color: #222; }
+  .dash-link {
+    display: block;
+    color: #5b7af5;
+    font-size: 16px;
+    text-decoration: none;
+    margin: 10px 0;
+    cursor: pointer;
+    background: none;
+    border: none;
+    font-family: inherit;
+    width: 100%;
+    transition: color .15s;
+  }
+  .dash-link:hover { color: #a066e8; text-decoration: underline; }
+
+  /* ── MENU MANAGE ── */
+  .page-wrap {
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 40px 16px;
+    background: #f5f7fa;
+  }
+  .page-box {
+    background: #fff;
+    border-radius: 16px;
+    padding: 40px 44px;
+    width: 100%;
+    max-width: 620px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07);
+  }
+  .page-box h2 { font-size: 22px; font-weight: 700; text-align: center; margin-bottom: 26px; color: #222; }
+  .page-box input {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid #d0d7e2;
+    border-radius: 8px;
+    font-size: 15px;
+    margin-bottom: 12px;
+    outline: none;
+    background: #f5f7fa;
+    transition: border-color .2s;
+  }
+  .page-box input:focus { border-color: #5b7af5; background: #fff; }
+  .page-box textarea {
+    width: 100%;
+    padding: 13px 16px;
+    border: 1.5px solid #d0d7e2;
+    border-radius: 8px;
+    font-size: 15px;
+    margin-bottom: 12px;
+    outline: none;
+    background: #f5f7fa;
+    resize: vertical;
+    min-height: 90px;
+    font-family: inherit;
+    transition: border-color .2s;
+  }
+  .page-box textarea:focus { border-color: #5b7af5; background: #fff; }
+  .btn-add-item {
+    display: block;
+    margin: 4px auto 0;
+    padding: 11px 36px;
+    background: #5b7af5;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: opacity .2s;
+  }
+  .btn-add-item:hover { opacity: .88; }
+
+  /* TABLE */
+  .table-section { margin-top: 32px; }
+  .table-section h3 { font-size: 18px; font-weight: 700; text-align: center; margin-bottom: 14px; color: #222; }
+  table { width: 100%; border-collapse: collapse; border-radius: 10px; overflow: hidden; }
+  thead tr { background: #5b7af5; }
+  thead th { padding: 12px 16px; color: #fff; font-size: 14px; font-weight: 600; text-align: left; }
+  tbody tr { border-bottom: 1px solid #eef0f4; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #f5f7ff; }
+  tbody td { padding: 12px 16px; font-size: 14px; color: #444; }
+  .btn-delete {
+    background: none;
+    border: none;
+    color: #e53e3e;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: opacity .15s;
+  }
+  .btn-delete:hover { opacity: .7; }
+  .btn-edit {
+    background: none;
+    border: none;
+    color: #5b7af5;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 600;
+    margin-right: 8px;
+    transition: opacity .15s;
+  }
+  .btn-edit:hover { opacity: .7; }
+
+  /* BACK & NAV */
+  .top-nav {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 22px;
+  }
+  .btn-back {
+    background: none;
+    border: 1.5px solid #d0d7e2;
+    border-radius: 7px;
+    padding: 6px 14px;
+    font-size: 13px;
+    color: #666;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .btn-back:hover { background: #f0f4ff; }
+  .page-heading { font-size: 17px; font-weight: 700; color: #333; }
+
+  /* EMPTY */
+  .empty-row td { text-align: center; color: #aaa; padding: 20px; font-size: 13px; }
+
+  /* TOAST */
+  #toast {
+    position: fixed; bottom: 24px; right: 24px;
+    background: #333; color: #fff;
+    padding: 12px 20px; border-radius: 8px;
+    font-size: 14px; display: none; z-index: 999;
+    border-left: 3px solid #5b7af5;
+  }
+  #toast.show { display: block; animation: slideIn .3s ease; }
+  #toast.error { border-left-color: #e53e3e; }
+  @keyframes slideIn { from{opacity:0;transform:translateX(16px)} to{opacity:1;transform:none} }
+
+  /* EDIT MODAL */
+  .modal-bg {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.35);
+    display: none; align-items: center; justify-content: center;
+    z-index: 200;
+  }
+  .modal-bg.open { display: flex; }
+  .modal-card {
+    background: #fff;
+    border-radius: 14px;
+    padding: 32px;
+    width: 440px;
+    max-width: 95vw;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.15);
+  }
+  .modal-card h3 { font-size: 18px; font-weight: 700; margin-bottom: 18px; }
+  .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
+  .btn-modal-cancel { padding: 9px 18px; border: 1.5px solid #d0d7e2; border-radius: 7px; background: #fff; color: #555; font-size: 14px; cursor: pointer; }
+  .btn-modal-save { padding: 9px 22px; background: #5b7af5; color: #fff; border: none; border-radius: 7px; font-size: 14px; font-weight: 600; cursor: pointer; }
+  .btn-modal-save:hover { opacity: .88; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN / REGISTER -->
+<div id="login-screen">
+
+  <!-- LOGIN BOX -->
+  <div class="login-box" id="box-login">
+    <h2>Нэвтрэх</h2>
+    <input type="text" id="inp-user" placeholder="Нэвтрэх нэр" onkeydown="if(event.key==='Enter')doLogin()">
+    <input type="password" id="inp-pass" placeholder="Нууц үг" onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="login-hint">Админ: admin / admin123</div>
+    <button class="btn-login" onclick="doLogin()">Нэвтрэх</button>
+    <div class="login-error" id="login-error">Нэвтрэх нэр эсвэл нууц үг буруу байна.</div>
+    <div class="login-switch">Бүртгэл байхгүй юу? <a onclick="switchBox('register')">Бүртгүүлэх</a></div>
+  </div>
+
+  <!-- REGISTER BOX -->
+  <div class="login-box" id="box-register" style="display:none">
+    <h2>Бүртгүүлэх</h2>
+    <input type="text"     id="reg-user"  placeholder="Нэвтрэх нэр"   onkeydown="if(event.key==='Enter')doRegister()">
+    <input type="email"    id="reg-email" placeholder="И-мэйл хаяг"   onkeydown="if(event.key==='Enter')doRegister()">
+    <input type="password" id="reg-pass"  placeholder="Нууц үг"        onkeydown="if(event.key==='Enter')doRegister()">
+    <input type="password" id="reg-pass2" placeholder="Нууц үг давтах" onkeydown="if(event.key==='Enter')doRegister()">
+    <button class="btn-login" onclick="doRegister()">Бүртгүүлэх</button>
+    <div class="login-error"   id="reg-error"></div>
+    <div class="login-success" id="reg-success">Амжилттай бүртгэгдлээ! Нэвтэрнэ үү.</div>
+    <div class="login-switch">Аль хэдийн бүртгэлтэй юу? <a onclick="switchBox('login')">Нэвтрэх</a></div>
+  </div>
+
+</div>
+
+<!-- ADMIN APP -->
+<div id="admin-app">
+
+  <!-- DASHBOARD -->
+  <div class="screen active" id="screen-dashboard">
+    <div class="dashboard-wrap">
+      <div class="dashboard-box">
+        <h2>Админ удирдлага</h2>
+        <button class="dash-link" onclick="showScreen('menu')">Цэс удирдах</button>
+        <button class="dash-link" onclick="showScreen('news')">Мэдээ удирдах</button>
+        <button class="dash-link" onclick="showScreen('users')">Хэрэглэгчид</button>
+        <button class="dash-link" onclick="doLogout()">Гарах</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MENU MANAGE -->
+  <div class="screen" id="screen-menu">
+    <div class="page-wrap">
+      <div class="page-box">
+        <div class="top-nav">
+          <button class="btn-back" onclick="showScreen('dashboard')">← Буцах</button>
+          <span class="page-heading">Цэс удирдах</span>
+        </div>
+        <h2>Цэс нэмэх</h2>
+        <input type="text" id="menu-name" placeholder="Цэсний нэр">
+        <input type="text" id="menu-url" placeholder="Цэсний холбоос">
+        <button class="btn-add-item" onclick="addMenu()">Нэмэх</button>
+
+        <div class="table-section">
+          <h3>Цэсүүд</h3>
+          <table>
+            <thead><tr>
+              <th>Цэсний нэр</th><th>Холбоос</th><th>Үйлдэл</th>
+            </tr></thead>
+            <tbody id="menu-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- NEWS MANAGE -->
+  <div class="screen" id="screen-news">
+    <div class="page-wrap">
+      <div class="page-box">
+        <div class="top-nav">
+          <button class="btn-back" onclick="showScreen('dashboard')">← Буцах</button>
+          <span class="page-heading">Мэдээ удирдах</span>
+        </div>
+        <h2>Мэдээ нэмэх</h2>
+        <input type="text" id="news-title" placeholder="Мэдээний гарчиг">
+        <textarea id="news-body" placeholder="Мэдээний агуулга"></textarea>
+        <button class="btn-add-item" onclick="addNews()">Нэмэх</button>
+
+        <div class="table-section">
+          <h3>Мэдээнүүд</h3>
+          <table>
+            <thead><tr>
+              <th>Гарчиг</th><th>Агуулга</th><th>Огноо</th><th>Үйлдэл</th>
+            </tr></thead>
+            <tbody id="news-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- USERS MANAGE -->
+  <div class="screen" id="screen-users">
+    <div class="page-wrap">
+      <div class="page-box">
+        <div class="top-nav">
+          <button class="btn-back" onclick="showScreen('dashboard')">← Буцах</button>
+          <span class="page-heading">Хэрэглэгчид удирдах</span>
+        </div>
+        <h2>Шинэ хэрэглэгч нэмэх</h2>
+        <input type="text"     id="nu-user"  placeholder="Нэвтрэх нэр">
+        <input type="email"    id="nu-email" placeholder="И-мэйл хаяг">
+        <input type="password" id="nu-pass"  placeholder="Нууц үг">
+        <select id="nu-role" style="width:100%;padding:13px 16px;border:1.5px solid #d0d7e2;border-radius:8px;font-size:15px;margin-bottom:12px;outline:none;background:#f5f7fa;">
+          <option value="user">Хэрэглэгч</option>
+          <option value="admin">Админ</option>
+        </select>
+        <button class="btn-add-item" onclick="addUser()">Нэмэх</button>
+
+        <div class="table-section">
+          <h3>Хэрэглэгчдийн жагсаалт</h3>
+          <table>
+            <thead><tr>
+              <th>Нэвтрэх нэр</th><th>И-мэйл</th><th>Эрх</th><th>Огноо</th><th>Үйлдэл</th>
+            </tr></thead>
+            <tbody id="users-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- EDIT MODAL -->
+<div class="modal-bg" id="modal-bg" onclick="closeModalOutside(event)">
+  <div class="modal-card">
+    <h3 id="modal-title">Засах</h3>
+    <div id="modal-fields"></div>
+    <div class="modal-actions">
+      <button class="btn-modal-cancel" onclick="closeModal()">Болих</button>
+      <button class="btn-modal-save" onclick="saveEdit()">Хадгалах</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+var menuData = [
+  { id:1, name:'Нүүр хуудас', url:'/' },
+  { id:2, name:'Миний тухай', url:'minii_tuhai' },
+  { id:3, name:'Холбоо барих', url:'contact' }
+];
+var newsData = [
+  { id:1, title:'Сайт нээгдлээ', body:'Манай вэбсайт амжилттай нээгдлээ.', date:'2025-04-10' },
+  { id:2, title:'Шинэ төсөл', body:'Шинэ төслийн ажил эхэллээ.', date:'2025-04-18' }
+];
+var usersData = [
+  { id:1, username:'admin', email:'admin@site.mn', password:'admin123', role:'admin', created:'2025-01-01' }
+];
+var nextMenuId = 4;
+var nextNewsId = 3;
+var nextUserId = 2;
+var editState = null;
+var toastTimer;
+
+// AUTH
+function switchBox(which) {
+  document.getElementById('box-login').style.display    = which === 'login'    ? '' : 'none';
+  document.getElementById('box-register').style.display = which === 'register' ? '' : 'none';
+  document.getElementById('login-error').style.display = 'none';
+  document.getElementById('reg-error').style.display   = 'none';
+  document.getElementById('reg-success').style.display = 'none';
+}
+
+function doLogin() {
+  var u = document.getElementById('inp-user').value.trim();
+  var p = document.getElementById('inp-pass').value;
+  var found = usersData.find(function(usr){ return usr.username === u && usr.password === p; });
+  var errEl = document.getElementById('login-error');
+  if (found && found.role === 'admin') {
+    errEl.style.display = 'none';
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('admin-app').style.display = 'block';
+    renderMenu(); renderNews(); renderUsersTable();
+  } else if (found) {
+    errEl.style.display = 'block';
+    errEl.textContent = 'Таны эрх хангалтгүй байна (Админ биш)!';
+  } else {
+    errEl.style.display = 'block';
+    errEl.textContent = 'Нэвтрэх нэр эсвэл нууц үг буруу байна.';
+  }
+}
+
+function doRegister() {
+  var u  = document.getElementById('reg-user').value.trim();
+  var em = document.getElementById('reg-email').value.trim();
+  var p  = document.getElementById('reg-pass').value;
+  var p2 = document.getElementById('reg-pass2').value;
+  var errEl = document.getElementById('reg-error');
+  var okEl  = document.getElementById('reg-success');
+  errEl.style.display = 'none'; okEl.style.display = 'none';
+  if (!u || !em || !p || !p2) { errEl.textContent='Бүх талбарыг бөглөнө үү!'; errEl.style.display='block'; return; }
+  if (p !== p2) { errEl.textContent='Нууц үг таарахгүй байна!'; errEl.style.display='block'; return; }
+  if (usersData.find(function(x){ return x.username === u; })) {
+    errEl.textContent='Нэвтрэх нэр аль хэдийн байна!'; errEl.style.display='block'; return;
+  }
+  var ds = new Date().toISOString().slice(0,10);
+  usersData.push({ id: nextUserId++, username: u, email: em, password: p, role:'user', created: ds });
+  document.getElementById('reg-user').value=''; document.getElementById('reg-email').value='';
+  document.getElementById('reg-pass').value=''; document.getElementById('reg-pass2').value='';
+  okEl.style.display = 'block';
+  setTimeout(function(){ switchBox('login'); }, 1800);
+}
+
+function doLogout() {
+  document.getElementById('admin-app').style.display = 'none';
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('inp-user').value = '';
+  document.getElementById('inp-pass').value = '';
+  document.getElementById('login-error').style.display = 'none';
+  showScreen('dashboard');
+}
+
+// SCREENS
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(function(s){ s.classList.remove('active'); });
+  document.getElementById('screen-' + name).classList.add('active');
+  if (name === 'users') renderUsersTable();
+}
+
+// MENU
+function addMenu() {
+  var name = document.getElementById('menu-name').value.trim();
+  var url  = document.getElementById('menu-url').value.trim();
+  if (!name) { toast('Цэсний нэр оруулна уу!', true); return; }
+  if (!url)  { toast('Холбоос оруулна уу!', true); return; }
+  menuData.push({ id: nextMenuId++, name: name, url: url });
+  document.getElementById('menu-name').value = '';
+  document.getElementById('menu-url').value = '';
+  renderMenu();
+  toast('Цэс амжилттай нэмэгдлээ!');
+}
+
+function deleteMenu(id) {
+  if (!confirm('Устгахдаа итгэлтэй байна уу?')) return;
+  menuData = menuData.filter(function(m){ return m.id !== id; });
+  renderMenu();
+  toast('Устгагдлаа.');
+}
+
+function editMenu(id) {
+  var item = menuData.find(function(m){ return m.id === id; });
+  editState = { type:'menu', id: id };
+  document.getElementById('modal-title').textContent = 'Цэс засах';
+  document.getElementById('modal-fields').innerHTML =
+    '<input type="text" id="edit-f1" placeholder="Цэсний нэр" value="' + esc(item.name) + '" style="width:100%;padding:12px 14px;border:1.5px solid #d0d7e2;border-radius:8px;font-size:15px;margin-bottom:12px;outline:none;background:#f5f7fa;">' +
+    '<input type="text" id="edit-f2" placeholder="Холбоос" value="' + esc(item.url) + '" style="width:100%;padding:12px 14px;border:1.5px solid #d0d7e2;border-radius:8px;font-size:15px;outline:none;background:#f5f7fa;">';
+  document.getElementById('modal-bg').classList.add('open');
+}
+
+function renderMenu() {
+  var tb = document.getElementById('menu-tbody');
+  if (!menuData.length) {
+    tb.innerHTML = '<tr class="empty-row"><td colspan="3">Цэс байхгүй байна</td></tr>';
+    return;
+  }
+  tb.innerHTML = menuData.map(function(m){
+    return '<tr><td>' + esc(m.name) + '</td><td>' + esc(m.url) + '</td><td>' +
+      '<button class="btn-edit" onclick="editMenu(' + m.id + ')">Засах</button>' +
+      '<button class="btn-delete" onclick="deleteMenu(' + m.id + ')">Устгах</button>' +
+      '</td></tr>';
+  }).join('');
+}
+
+// NEWS
+function addNews() {
+  var title = document.getElementById('news-title').value.trim();
+  var body  = document.getElementById('news-body').value.trim();
+  if (!title) { toast('Гарчиг оруулна уу!', true); return; }
+  var today = new Date().toISOString().slice(0,10);
+  newsData.push({ id: nextNewsId++, title: title, body: body, date: today });
+  document.getElementById('news-title').value = '';
+  document.getElementById('news-body').value = '';
+  renderNews();
+  toast('Мэдээ амжилттай нэмэгдлээ!');
+}
+
+function deleteNews(id) {
+  if (!confirm('Устгахдаа итгэлтэй байна уу?')) return;
+  newsData = newsData.filter(function(n){ return n.id !== id; });
+  renderNews();
+  toast('Устгагдлаа.');
+}
+
+function editNews(id) {
+  var item = newsData.find(function(n){ return n.id === id; });
+  editState = { type:'news', id: id };
+  document.getElementById('modal-title').textContent = 'Мэдээ засах';
+  document.getElementById('modal-fields').innerHTML =
+    '<input type="text" id="edit-f1" placeholder="Гарчиг" value="' + esc(item.title) + '" style="width:100%;padding:12px 14px;border:1.5px solid #d0d7e2;border-radius:8px;font-size:15px;margin-bottom:12px;outline:none;background:#f5f7fa;">' +
+    '<textarea id="edit-f2" placeholder="Агуулга" style="width:100%;padding:12px 14px;border:1.5px solid #d0d7e2;border-radius:8px;font-size:15px;outline:none;background:#f5f7fa;resize:vertical;min-height:80px;font-family:inherit">' + esc(item.body) + '</textarea>';
+  document.getElementById('modal-bg').classList.add('open');
+}
+
+function renderNews() {
+  var tb = document.getElementById('news-tbody');
+  if (!newsData.length) {
+    tb.innerHTML = '<tr class="empty-row"><td colspan="4">Мэдээ байхгүй байна</td></tr>';
+    return;
+  }
+  tb.innerHTML = newsData.map(function(n){
+    var shortBody = n.body.length > 30 ? n.body.slice(0,30) + '...' : n.body;
+    return '<tr><td>' + esc(n.title) + '</td><td>' + esc(shortBody) + '</td><td>' + n.date + '</td><td>' +
+      '<button class="btn-edit" onclick="editNews(' + n.id + ')">Засах</button>' +
+      '<button class="btn-delete" onclick="deleteNews(' + n.id + ')">Устгах</button>' +
+      '</td></tr>';
+  }).join('');
+}
+
+// EDIT MODAL
+function saveEdit() {
+  var f1 = document.getElementById('edit-f1').value.trim();
+  var f2 = document.getElementById('edit-f2').value.trim();
+  if (!f1) { toast('Талбар хоосон байна!', true); return; }
+  if (editState.type === 'menu') {
+    var item = menuData.find(function(m){ return m.id === editState.id; });
+    item.name = f1; item.url = f2;
+    renderMenu();
+    toast('Цэс засагдлаа!');
+  } else {
+    var item = newsData.find(function(n){ return n.id === editState.id; });
+    item.title = f1; item.body = f2;
+    renderNews();
+    toast('Мэдээ засагдлаа!');
+  }
+  closeModal();
+}
+
+function closeModal() { document.getElementById('modal-bg').classList.remove('open'); }
+function closeModalOutside(e) { if (e.target.id === 'modal-bg') closeModal(); }
+
+// USERS
+function addUser() {
+  var u  = document.getElementById('nu-user').value.trim();
+  var em = document.getElementById('nu-email').value.trim();
+  var p  = document.getElementById('nu-pass').value;
+  var r  = document.getElementById('nu-role').value;
+  if (!u || !em || !p) { toast('Бүх талбарыг бөглөнө үү!', true); return; }
+  if (usersData.find(function(x){ return x.username === u; })) { toast('Нэвтрэх нэр аль хэдийн байна!', true); return; }
+  var ds = new Date().toISOString().slice(0,10);
+  usersData.push({ id: nextUserId++, username: u, email: em, password: p, role: r, created: ds });
+  document.getElementById('nu-user').value=''; document.getElementById('nu-email').value='';
+  document.getElementById('nu-pass').value=''; document.getElementById('nu-role').value='user';
+  renderUsersTable();
+  toast('Хэрэглэгч нэмэгдлээ!');
+}
+
+function deleteUser(id) {
+  if (!confirm('Устгахдаа итгэлтэй байна уу?')) return;
+  usersData = usersData.filter(function(u){ return u.id !== id; });
+  renderUsersTable();
+  toast('Устгагдлаа.');
+}
+
+function toggleRole(id) {
+  var usr = usersData.find(function(u){ return u.id === id; });
+  if (!usr) return;
+  usr.role = usr.role === 'admin' ? 'user' : 'admin';
+  renderUsersTable();
+  toast('Эрх өөрчлөгдлөө.');
+}
+
+function renderUsersTable() {
+  var tb = document.getElementById('users-tbody');
+  if (!usersData.length) { tb.innerHTML = '<tr class="empty-row"><td colspan="5">Хэрэглэгч байхгүй байна</td></tr>'; return; }
+  tb.innerHTML = usersData.map(function(u){
+    var badge = u.role === 'admin'
+      ? '<span class="role-badge role-admin">Админ</span>'
+      : '<span class="role-badge role-user">Хэрэглэгч</span>';
+    return '<tr><td><b>' + esc(u.username) + '</b></td><td>' + esc(u.email||'—') + '</td><td>' + badge + '</td><td>' + esc(u.created||'—') + '</td><td>' +
+      '<button class="btn-edit" onclick="toggleRole(' + u.id + ')">Эрх өөрчлөх</button>' +
+      (u.username !== 'admin' ? '<button class="btn-delete" onclick="deleteUser(' + u.id + ')">Устгах</button>' : '') +
+      '</td></tr>';
+  }).join('');
+}
+
+// HELPERS
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function toast(msg, isError) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show' + (isError ? ' error' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove('show'); }, 2800);
+}
+</script>
+</body>
+</html>

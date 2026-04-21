@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="mn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Миний Вэбсайт</title>
+<style>
+  /* ════════════════════════════════
+     GLOBAL
+  ════════════════════════════════ */
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background:#fff; color:#333; }
+
+  /* ════════════════════════════════
+     SCREENS
+  ════════════════════════════════ */
+  .screen { display:none; }
+  .screen.active { display:block; }
+
+  /* ════════════════════════════════
+     ── FRONT-END SITE ──
+  ════════════════════════════════ */
+
+  /* NAV */
+  #site-nav {
+    background: #0d1b3e;
+    padding: 0 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky; top:0; z-index:50;
+  }
+  .nav-brand { color:#f5c518; font-size:17px; font-weight:700; }
+  .nav-links { display:flex; gap:0; }
+  .nav-links a {
+    color:#cdd6f4;
+    text-decoration:none;
+    font-size:14px;
+    padding:0 16px;
+    height:56px;
+    display:flex; align-items:center;
+    transition:color .15s;
+  }
+  .nav-links a:hover { color:#f5c518; }
+  .nav-admin-btn {
+    background:none; border:1.5px solid #f5c518; color:#f5c518;
+    padding:6px 14px; border-radius:6px; font-size:13px;
+    cursor:pointer; transition:background .15s;
+  }
+  .nav-admin-btn:hover { background:#f5c518; color:#0d1b3e; }
+
+  /* HERO */
+  .hero {
+    background: #0d1b3e;
+    color:#fff;
+    text-align:center;
+    padding: 80px 20px 72px;
+  }
+  .hero h1 { font-size:36px; font-weight:800; color:#f5c518; margin-bottom:14px; }
+  .hero p { font-size:16px; color:#cdd6f4; max-width:480px; margin:0 auto; }
+
+  /* SKILLS */
+  .skills-section { background:#162040; padding:48px 40px; text-align:center; }
+  .skills-section h2 { color:#fff; font-size:20px; font-weight:700; margin-bottom:28px; }
+  .skills-grid { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; max-width:780px; margin:0 auto; }
+  .skill-tag {
+    background:#1e2f5a;
+    color:#f5c518;
+    border:1.5px solid #2a3f70;
+    border-radius:8px;
+    padding:14px 28px;
+    font-size:15px;
+    font-weight:600;
+    min-width:110px;
+  }
+
+  /* PROJECTS */
+  .projects-section { background:#162040; padding:40px; border-top:1px solid #1e2f5a; }
+  .projects-section h2 { color:#f5c518; font-size:20px; font-weight:700; text-align:center; margin-bottom:22px; }
+  .project-card {
+    background:#1e2f5a;
+    border-radius:10px;
+    padding:22px 28px;
+    margin-bottom:14px;
+    max-width:680px;
+    margin-left:auto; margin-right:auto;
+  }
+  .project-card h3 { color:#f5c518; font-size:16px; font-weight:700; margin-bottom:6px; }
+  .project-card p { color:#cdd6f4; font-size:14px; }
+  .projects-empty { text-align:center; color:#6b7fa8; font-size:14px; padding:24px 0; }
+
+  /* CONTACT */
+  .contact-section { background:#0d1b3e; padding:48px 40px; }
+  .contact-section h2 { color:#fff; font-size:20px; font-weight:700; text-align:center; margin-bottom:24px; }
+  .contact-form { max-width:440px; margin:0 auto; }
+  .contact-form label { display:block; color:#cdd6f4; font-size:14px; margin-bottom:6px; margin-top:14px; }
+  .contact-form input,
+  .contact-form textarea {
+    width:100%;
+    background:#162040;
+    border:1.5px solid #2a3f70;
+    border-radius:7px;
+    padding:12px 14px;
+    color:#fff;
+    font-size:14px;
+    outline:none;
+    font-family:inherit;
+    transition:border-color .2s;
+  }
+  .contact-form input:focus,
+  .contact-form textarea:focus { border-color:#f5c518; }
+  .contact-form textarea { resize:vertical; min-height:80px; }
+  .btn-contact {
+    width:100%;
+    margin-top:18px;
+    padding:13px;
+    background:#f5c518;
+    color:#0d1b3e;
+    border:none;
+    border-radius:8px;
+    font-size:15px;
+    font-weight:700;
+    cursor:pointer;
+    transition:opacity .2s;
+  }
+  .btn-contact:hover { opacity:.88; }
+
+  /* FOOTER */
+  .site-footer {
+    background:#0a1530;
+    color:#6b7fa8;
+    text-align:center;
+    padding:16px;
+    font-size:13px;
+  }
+
+  /* ════════════════════════════════
+     ── LOGIN ──
+  ════════════════════════════════ */
+  #screen-login {
+    background:linear-gradient(135deg,#4fc3c3 0%,#7b6eea 100%);
+  }
+  .login-box {
+    background:#fff;
+    border-radius:16px;
+    padding:48px 40px;
+    width:400px;
+    text-align:center;
+    box-shadow:0 4px 24px rgba(0,0,0,.1);
+  }
+  .login-box h2 { font-size:24px; font-weight:700; margin-bottom:26px; color:#222; }
+  .login-box input {
+    width:100%; padding:12px 14px;
+    border:1.5px solid #d0d7e2; border-radius:8px;
+    font-size:15px; margin-bottom:12px; outline:none;
+    background:#f5f7fa; transition:border-color .2s;
+  }
+  .login-box input:focus { border-color:#7b6eea; background:#fff; }
+  .login-hint { font-size:12px; color:#999; margin-bottom:12px; }
+  .btn-login {
+    width:100%; padding:13px;
+    background:linear-gradient(90deg,#6b7ff0,#a066e8);
+    color:#fff; border:none; border-radius:8px;
+    font-size:15px; font-weight:600; cursor:pointer; transition:opacity .2s;
+  }
+  .btn-login:hover { opacity:.9; }
+  .login-error { color:#e53e3e; font-size:13px; margin-top:10px; display:none; }
+  .btn-back-site { margin-top:14px; background:none; border:none; color:#888; font-size:13px; cursor:pointer; }
+  .btn-back-site:hover { color:#555; }
+  .login-switch { margin-top:10px; font-size:13px; color:#888; }
+  .login-switch a { color:#7b6eea; cursor:pointer; text-decoration:underline; }
+  .login-success { color:#22c55e; font-size:13px; margin-top:10px; display:none; }
+
+  /* ── USER TABLE in admin ── */
+  .user-role-badge {
+    font-size:11px; padding:3px 10px; border-radius:20px; font-weight:600;
+  }
+  .role-admin { background:#fef3c7; color:#d97706; }
+  .role-user  { background:#e0f2fe; color:#0284c7; }
+
+  /* ════════════════════════════════
+     ── ADMIN ──
+  ════════════════════════════════ */
+  #screen-admin { min-height:100vh; background:#f5f7fa; }
+  .admin-topbar {
+    background:#fff;
+    border-bottom:1.5px solid #e2e8f0;
+    padding:0 32px;
+    height:56px;
+    display:flex; align-items:center; justify-content:space-between;
+    position:sticky; top:0; z-index:50;
+  }
+  .admin-topbar-left { display:flex; align-items:center; gap:16px; }
+  .admin-brand { font-size:16px; font-weight:700; color:#333; }
+  .admin-badge { font-size:11px; background:#eef2ff; color:#5b7af5; padding:3px 10px; border-radius:20px; font-weight:600; }
+  .admin-topbar-right { display:flex; gap:10px; align-items:center; }
+  .btn-view-site {
+    padding:7px 14px; background:#f0f4ff; border:1.5px solid #c7d2fe;
+    color:#5b7af5; border-radius:7px; font-size:13px; font-weight:600; cursor:pointer;
+    transition:background .15s;
+  }
+  .btn-view-site:hover { background:#e0e7ff; }
+  .btn-logout {
+    padding:7px 14px; background:none; border:1.5px solid #fecaca;
+    color:#e53e3e; border-radius:7px; font-size:13px; cursor:pointer;
+    transition:background .15s;
+  }
+  .btn-logout:hover { background:#fff5f5; }
+
+  .admin-body { display:flex; min-height:calc(100vh - 56px); }
+
+  /* Sidebar */
+  .admin-sidebar {
+    width:210px;
+    background:#fff;
+    border-right:1.5px solid #e2e8f0;
+    padding:20px 12px;
+    flex-shrink:0;
+  }
+  .sidebar-section-label {
+    font-size:10px; color:#aaa; letter-spacing:1.5px;
+    text-transform:uppercase; padding:0 8px; margin:16px 0 6px;
+  }
+  .sidebar-btn {
+    display:block; width:100%;
+    padding:10px 12px; border-radius:8px;
+    background:none; border:none;
+    text-align:left; font-size:14px; color:#555;
+    cursor:pointer; transition:background .15s, color .15s;
+  }
+  .sidebar-btn:hover { background:#f0f4ff; color:#5b7af5; }
+  .sidebar-btn.active { background:#eef2ff; color:#5b7af5; font-weight:600; }
+
+  /* Admin content */
+  .admin-content { flex:1; padding:32px; }
+  .admin-page { display:none; }
+  .admin-page.active { display:block; }
+
+  .admin-page-title { font-size:20px; font-weight:700; margin-bottom:22px; color:#222; }
+
+  /* Admin cards */
+  .admin-card {
+    background:#fff;
+    border-radius:12px;
+    padding:28px;
+    box-shadow:0 1px 8px rgba(0,0,0,.06);
+    margin-bottom:20px;
+  }
+  .admin-card h3 { font-size:15px; font-weight:700; margin-bottom:16px; color:#333; }
+
+  /* Forms */
+  .form-row { margin-bottom:12px; }
+  .form-row label { display:block; font-size:12px; color:#888; margin-bottom:5px; font-weight:600; }
+  .form-row input, .form-row textarea {
+    width:100%; padding:11px 13px;
+    border:1.5px solid #d0d7e2; border-radius:8px;
+    font-size:14px; outline:none; background:#f9fafb;
+    transition:border-color .2s; font-family:inherit;
+  }
+  .form-row input:focus, .form-row textarea:focus { border-color:#5b7af5; background:#fff; }
+  .form-row textarea { resize:vertical; min-height:70px; }
+  .btn-save-form {
+    padding:10px 24px;
+    background:#5b7af5; color:#fff;
+    border:none; border-radius:8px;
+    font-size:14px; font-weight:600; cursor:pointer;
+    transition:opacity .2s; margin-top:4px;
+  }
+  .btn-save-form:hover { opacity:.88; }
+
+  /* Tables */
+  .admin-table { width:100%; border-collapse:collapse; }
+  .admin-table thead tr { background:#f0f4ff; }
+  .admin-table th { padding:10px 14px; text-align:left; font-size:12px; color:#5b7af5; font-weight:700; text-transform:uppercase; letter-spacing:.5px; }
+  .admin-table tbody tr { border-bottom:1px solid #f0f2f7; transition:background .1s; }
+  .admin-table tbody tr:hover { background:#fafbff; }
+  .admin-table td { padding:11px 14px; font-size:14px; color:#444; }
+  .btn-tbl-edit { background:none; border:none; color:#5b7af5; font-size:13px; cursor:pointer; font-weight:600; margin-right:6px; }
+  .btn-tbl-del { background:none; border:none; color:#e53e3e; font-size:13px; cursor:pointer; font-weight:600; }
+  .tbl-empty { text-align:center; color:#aaa; padding:20px; font-size:13px; }
+
+  /* Dashboard stats */
+  .dash-stats { display:grid; grid-template-columns:repeat(4,1fr); gap:16px; margin-bottom:24px; }
+  .dash-stat { background:#fff; border-radius:12px; padding:22px; box-shadow:0 1px 8px rgba(0,0,0,.06); text-align:center; }
+  .dash-stat-val { font-size:36px; font-weight:800; }
+  .dash-stat-val.blue { color:#5b7af5; }
+  .dash-stat-val.gold { color:#d4a017; }
+  .dash-stat-val.green { color:#22c55e; }
+  .dash-stat-label { font-size:12px; color:#999; margin-top:4px; }
+
+  /* Skills chips in admin */
+  .skills-chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px; }
+  .skill-chip {
+    background:#eef2ff; color:#5b7af5;
+    padding:6px 14px; border-radius:20px; font-size:13px; font-weight:600;
+    display:flex; align-items:center; gap:6px;
+  }
+  .skill-chip button { background:none; border:none; color:#e53e3e; cursor:pointer; font-size:14px; line-height:1; }
+
+  /* Profile form */
+  .profile-preview {
+    background:#0d1b3e; border-radius:10px; padding:20px 24px;
+    margin-bottom:20px;
+  }
+  .profile-preview .prev-name { color:#f5c518; font-size:20px; font-weight:700; }
+  .profile-preview .prev-sub { color:#cdd6f4; font-size:14px; margin-top:6px; }
+
+  /* Modal */
+  .modal-bg {
+    position:fixed; inset:0;
+    background:rgba(0,0,0,.35);
+    display:none; align-items:center; justify-content:center; z-index:300;
+  }
+  .modal-bg.open { display:flex; }
+  .modal-card {
+    background:#fff; border-radius:14px; padding:32px;
+    width:460px; max-width:95vw;
+    box-shadow:0 8px 40px rgba(0,0,0,.15);
+  }
+  .modal-card h3 { font-size:17px; font-weight:700; margin-bottom:18px; }
+  .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:16px; }
+  .btn-m-cancel { padding:9px 18px; border:1.5px solid #d0d7e2; border-radius:7px; background:#fff; color:#555; font-size:14px; cursor:pointer; }
+  .btn-m-save { padding:9px 22px; background:#5b7af5; color:#fff; border:none; border-radius:7px; font-size:14px; font-weight:600; cursor:pointer; }
+
+  /* Toast */
+  #toast {
+    position:fixed; bottom:22px; right:22px;
+    background:#1e293b; color:#fff;
+    padding:12px 20px; border-radius:8px; font-size:14px;
+    display:none; z-index:999; border-left:3px solid #5b7af5;
+  }
+  #toast.show { display:block; animation:slideIn .3s ease; }
+  #toast.err { border-left-color:#e53e3e; }
+  @keyframes slideIn { from{opacity:0;transform:translateX(14px)} to{opacity:1;transform:none} }
+
+  /* Contact messages */
+  .msg-card { background:#f8faff; border:1px solid #e0e7ff; border-radius:8px; padding:14px 18px; margin-bottom:10px; }
+  .msg-card .msg-from { font-weight:700; color:#333; font-size:14px; }
+  .msg-card .msg-email { font-size:12px; color:#888; margin:2px 0 6px; }
+  .msg-card .msg-body { font-size:14px; color:#555; }
+  .msg-card .msg-del { float:right; background:none; border:none; color:#e53e3e; cursor:pointer; font-size:12px; }
+  .msgs-empty { color:#aaa; font-size:14px; padding:16px 0; }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════
+     FRONT-END SITE
+══════════════════════════════ -->
+<div class="screen active" id="screen-site">
+
+  <!-- NAV -->
+  <nav id="site-nav">
+    <div class="nav-brand" id="nav-brand">Миний сайт</div>
+    <div class="nav-links" id="nav-links">
+      <a onclick="scrollToSection('hero')" style="cursor:pointer">Нүүр</a>
+      <a onclick="scrollToSection('skills')" style="cursor:pointer">Ур чадвар</a>
+      <a onclick="scrollToSection('projects')" style="cursor:pointer">Төслүүд</a>
+      <a onclick="scrollToSection('contact')" style="cursor:pointer">Холбоо барих</a>
+    </div>
+    <button class="nav-admin-btn" onclick="showScreen('login')">Админ</button>
+  </nav>
+
+  <!-- HERO -->
+  <section id="hero" class="hero">
+    <h1 id="hero-title">Сайн уу! [Таны нэр]</h1>
+    <p id="hero-sub">Таны ур чадвар, төслүүдийг танилцуулах миний вэб сайт.</p>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" class="skills-section">
+    <h2>Миний Ур Чадварууд</h2>
+    <div class="skills-grid" id="site-skills-grid">
+      <!-- rendered by JS -->
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects" class="projects-section">
+    <h2>Бүтээсэн төсөл</h2>
+    <div id="site-projects-list"></div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact" class="contact-section">
+    <h2>Холбоо барих</h2>
+    <div class="contact-form">
+      <label>Таны нэр:</label>
+      <input type="text" id="cf-name" placeholder="">
+      <label>И-мэйл хаяг:</label>
+      <input type="email" id="cf-email" placeholder="">
+      <label>Танилцуулга:</label>
+      <textarea id="cf-msg" rows="3"></textarea>
+      <button class="btn-contact" onclick="submitContact()">Илгээх</button>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <span id="footer-text">© 2025 танилцуулга вэб</span>
+  </footer>
+</div>
+
+<!-- ══════════════════════════════
+     LOGIN / REGISTER
+══════════════════════════════ -->
+<div class="screen" id="screen-login">
+  <div style="min-height:100vh;background:linear-gradient(135deg,#4fc3c3 0%,#7b6eea 100%);display:flex;align-items:center;justify-content:center;padding:40px 20px;">
+
+    <!-- LOGIN BOX -->
+    <div class="login-box" id="box-login">
+      <h2>Нэвтрэх</h2>
+      <input type="text" id="inp-user" placeholder="Нэвтрэх нэр" onkeydown="if(event.key==='Enter')doLogin()">
+      <input type="password" id="inp-pass" placeholder="Нууц үг" onkeydown="if(event.key==='Enter')doLogin()">
+      <div class="login-hint">Админ: admin / admin123</div>
+      <button class="btn-login" onclick="doLogin()">Нэвтрэх</button>
+      <div class="login-error" id="login-error">Нэвтрэх нэр эсвэл нууц үг буруу!</div>
+      <div class="login-switch">Бүртгэл байхгүй юу? <a onclick="switchAuthBox('register')">Бүртгүүлэх</a></div>
+      <button class="btn-back-site" onclick="showScreen('site')">← Сайт руу буцах</button>
+    </div>
+
+    <!-- REGISTER BOX -->
+    <div class="login-box" id="box-register" style="display:none">
+      <h2>Бүртгүүлэх</h2>
+      <input type="text" id="reg-user" placeholder="Нэвтрэх нэр" onkeydown="if(event.key==='Enter')doRegister()">
+      <input type="email" id="reg-email" placeholder="И-мэйл хаяг" onkeydown="if(event.key==='Enter')doRegister()">
+      <input type="password" id="reg-pass" placeholder="Нууц үг" onkeydown="if(event.key==='Enter')doRegister()">
+      <input type="password" id="reg-pass2" placeholder="Нууц үг давтах" onkeydown="if(event.key==='Enter')doRegister()">
+      <button class="btn-login" onclick="doRegister()">Бүртгүүлэх</button>
+      <div class="login-error" id="reg-error"></div>
+      <div class="login-success" id="reg-success">Амжилттай бүртгэгдлээ! Нэвтэрнэ үү.</div>
+      <div class="login-switch">Аль хэдийн бүртгэлтэй юу? <a onclick="switchAuthBox('login')">Нэвтрэх</a></div>
+      <button class="btn-back-site" onclick="showScreen('site')">← Сайт руу буцах</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════
+     ADMIN
+══════════════════════════════ -->
+<div class="screen" id="screen-admin">
+  <div class="admin-topbar">
+    <div class="admin-topbar-left">
+      <span class="admin-brand">Админ Панел</span>
+      <span class="admin-badge">ADMIN</span>
+    </div>
+    <div class="admin-topbar-right">
+      <button class="btn-view-site" onclick="showScreen('site')">← Сайт харах</button>
+      <button class="btn-logout" onclick="doLogout()">Гарах</button>
+    </div>
+  </div>
+
+  <div class="admin-body">
+    <!-- Sidebar -->
+    <div class="admin-sidebar">
+      <div class="sidebar-section-label">Үндсэн</div>
+      <button class="sidebar-btn active" onclick="adminPage('dashboard',this)">⊞ Дашбоард</button>
+      <div class="sidebar-section-label">Удирдлага</div>
+      <button class="sidebar-btn" onclick="adminPage('profile',this)">◉ Профайл</button>
+      <button class="sidebar-btn" onclick="adminPage('skills',this)">★ Ур чадвар</button>
+      <button class="sidebar-btn" onclick="adminPage('projects',this)">◇ Төслүүд</button>
+      <button class="sidebar-btn" onclick="adminPage('menu',this)">☰ Цэс</button>
+      <button class="sidebar-btn" onclick="adminPage('messages',this)">✉ Мессежүүд</button>
+      <button class="sidebar-btn" onclick="adminPage('users',this)">👤 Хэрэглэгчид</button>
+    </div>
+
+    <!-- Content -->
+    <div class="admin-content">
+
+      <!-- DASHBOARD -->
+      <div class="admin-page active" id="ap-dashboard">
+        <div class="admin-page-title">Дашбоард</div>
+        <div class="dash-stats">
+          <div class="dash-stat"><div class="dash-stat-val blue" id="ds-skills">0</div><div class="dash-stat-label">Ур чадвар</div></div>
+          <div class="dash-stat"><div class="dash-stat-val gold" id="ds-projects">0</div><div class="dash-stat-label">Төслүүд</div></div>
+          <div class="dash-stat"><div class="dash-stat-val green" id="ds-msgs">0</div><div class="dash-stat-label">Мессеж</div></div>
+          <div class="dash-stat"><div class="dash-stat-val" style="color:#a855f7" id="ds-users">0</div><div class="dash-stat-label">Хэрэглэгчид</div></div>
+        </div>
+        <div class="admin-card">
+          <h3>Хурдан хандалт</h3>
+          <p style="font-size:14px;color:#888;line-height:1.8">
+            • <b>Профайл</b> — нэр, танилцуулга засах<br>
+            • <b>Ур чадвар</b> — HTML, CSS гэх мэт нэмэх/устгах<br>
+            • <b>Төслүүд</b> — бүтээсэн ажлуудаа нэмэх/засах<br>
+            • <b>Цэс</b> — навигацийн холбоосуудыг удирдах<br>
+            • <b>Мессежүүд</b> — ирсэн холбоо барих мессежүүд
+          </p>
+        </div>
+      </div>
+
+      <!-- PROFILE -->
+      <div class="admin-page" id="ap-profile">
+        <div class="admin-page-title">Профайл засах</div>
+        <div class="admin-card">
+          <h3>Урдчилан харах</h3>
+          <div class="profile-preview">
+            <div class="prev-name" id="prev-name">Сайн уу! [Таны нэр]</div>
+            <div class="prev-sub" id="prev-sub">Таны ур чадвар, төслүүдийг танилцуулах миний вэб сайт.</div>
+          </div>
+          <div class="form-row"><label>Таны нэр / гарчиг</label><input id="pf-name" placeholder="Сайн уу! Миний нэр бол..."></div>
+          <div class="form-row"><label>Танилцуулга текст</label><textarea id="pf-sub" rows="2"></textarea></div>
+          <div class="form-row"><label>Footer текст</label><input id="pf-footer" placeholder="© 2025 ..."></div>
+          <button class="btn-save-form" onclick="saveProfile()">Хадгалах</button>
+        </div>
+      </div>
+
+      <!-- SKILLS -->
+      <div class="admin-page" id="ap-skills">
+        <div class="admin-page-title">Ур Чадвар удирдах</div>
+        <div class="admin-card">
+          <h3>Нэмэгдсэн ур чадварууд</h3>
+          <div class="skills-chips" id="admin-skills-chips"></div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <input id="skill-input" placeholder="Шинэ ур чадвар (жишээ: Python)" style="padding:10px 13px;border:1.5px solid #d0d7e2;border-radius:8px;font-size:14px;outline:none;background:#f9fafb;width:220px">
+            <button class="btn-save-form" style="margin-top:0" onclick="addSkill()">+ Нэмэх</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PROJECTS -->
+      <div class="admin-page" id="ap-projects">
+        <div class="admin-page-title">Төсөл удирдах</div>
+        <div class="admin-card">
+          <h3>Шинэ төсөл нэмэх</h3>
+          <div class="form-row"><label>Төслийн нэр</label><input id="proj-name" placeholder="Төслийн нэр"></div>
+          <div class="form-row"><label>Тайлбар</label><textarea id="proj-desc" rows="2" placeholder="Энэ төсөл юу хийдэг..."></textarea></div>
+          <button class="btn-save-form" onclick="addProject()">+ Нэмэх</button>
+        </div>
+        <div class="admin-card">
+          <h3>Төслүүдийн жагсаалт</h3>
+          <table class="admin-table">
+            <thead><tr><th>Нэр</th><th>Тайлбар</th><th>Үйлдэл</th></tr></thead>
+            <tbody id="proj-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MENU -->
+      <div class="admin-page" id="ap-menu">
+        <div class="admin-page-title">Цэс удирдах</div>
+        <div class="admin-card">
+          <h3>Шинэ цэс нэмэх</h3>
+          <div class="form-row"><label>Цэсний нэр</label><input id="menu-name" placeholder="Жишээ: Нүүр"></div>
+          <div class="form-row"><label>Холбоос (#id)</label><input id="menu-url" placeholder="#hero"></div>
+          <button class="btn-save-form" onclick="addMenu()">+ Нэмэх</button>
+        </div>
+        <div class="admin-card">
+          <h3>Цэсний жагсаалт</h3>
+          <table class="admin-table">
+            <thead><tr><th>Нэр</th><th>Холбоос</th><th>Үйлдэл</th></tr></thead>
+            <tbody id="menu-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MESSAGES -->
+      <div class="admin-page" id="ap-messages">
+        <div class="admin-page-title">Ирсэн мессежүүд</div>
+        <div class="admin-card">
+          <div id="msgs-list"></div>
+        </div>
+      </div>
+
+      <!-- USERS -->
+      <div class="admin-page" id="ap-users">
+        <div class="admin-page-title">Хэрэглэгчид удирдах</div>
+        <div class="admin-card">
+          <h3>Шинэ хэрэглэгч нэмэх</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+            <div class="form-row"><label>Нэвтрэх нэр</label><input id="nu-user" placeholder="username"></div>
+            <div class="form-row"><label>И-мэйл</label><input id="nu-email" placeholder="email@example.com"></div>
+            <div class="form-row"><label>Нууц үг</label><input type="password" id="nu-pass" placeholder="Нууц үг"></div>
+            <div class="form-row"><label>Эрх</label>
+              <select id="nu-role" style="width:100%;padding:11px 13px;border:1.5px solid #d0d7e2;border-radius:8px;font-size:14px;outline:none;background:#f9fafb;">
+                <option value="user">Хэрэглэгч</option>
+                <option value="admin">Админ</option>
+              </select>
+            </div>
+          </div>
+          <button class="btn-save-form" onclick="addUser()">+ Нэмэх</button>
+        </div>
+        <div class="admin-card">
+          <h3>Хэрэглэгчдийн жагсаалт</h3>
+          <table class="admin-table">
+            <thead><tr><th>Нэвтрэх нэр</th><th>И-мэйл</th><th>Эрх</th><th>Бүртгэсэн</th><th>Үйлдэл</th></tr></thead>
+            <tbody id="users-tbody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div><!-- /admin-content -->
+  </div><!-- /admin-body -->
+</div><!-- /screen-admin -->
+
+<!-- EDIT MODAL -->
+<div class="modal-bg" id="modal-bg" onclick="closeModalOut(event)">
+  <div class="modal-card">
+    <h3 id="modal-title">Засах</h3>
+    <div id="modal-fields"></div>
+    <div class="modal-actions">
+      <button class="btn-m-cancel" onclick="closeModal()">Болих</button>
+      <button class="btn-m-save" onclick="saveModal()">Хадгалах</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div id="toast"></div>
+
+<script>
+/* ── STATE ─────────────────────────────────────────── */
+var S = {
+  profile: {
+    name: 'Сайн уу! [Таны нэр]',
+    sub:  'Таны ур чадвар, төслүүдийг танилцуулах миний вэб сайт.',
+    footer: '© 2025 танилцуулга вэб'
+  },
+  skills: ['HTML','CSS','JavaScript','React','Tailwind CSS','PHP'],
+  projects: [
+    { id:1, name:'Төслийн нэр', desc:'Төслийн тайлбар' },
+    { id:2, name:'Төслийн нэр', desc:'Төслийн тайлбар' }
+  ],
+  menu: [
+    { id:1, name:'Нүүр',         url:'#hero' },
+    { id:2, name:'Ур чадвар',    url:'#skills' },
+    { id:3, name:'Төслүүд',      url:'#projects' },
+    { id:4, name:'Холбоо барих', url:'#contact' }
+  ],
+  messages: [],
+  users: [
+    { id:1, username:'admin', email:'admin@site.mn', role:'admin', created: '2025-01-01' }
+  ]
+};
+var nextProjId = 3;
+var nextMenuId = 5;
+var nextUserId = 2;
+var editState = null;
+var toastTimer;
+var currentUser = null;
+
+/* ── SCREENS ───────────────────────────────────────── */
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(function(s){
+    s.classList.remove('active');
+  });
+  document.getElementById('screen-' + name).classList.add('active');
+  window.scrollTo(0, 0);
+  if (name === 'site') renderSite();
+  if (name === 'admin') { renderAdminAll(); }
+}
+
+/* ── AUTH ──────────────────────────────────────────── */
+function switchAuthBox(which) {
+  document.getElementById('box-login').style.display    = which === 'login'    ? '' : 'none';
+  document.getElementById('box-register').style.display = which === 'register' ? '' : 'none';
+  document.getElementById('login-error').style.display = 'none';
+  document.getElementById('reg-error').style.display   = 'none';
+  document.getElementById('reg-success').style.display = 'none';
+}
+function doLogin() {
+  var u = document.getElementById('inp-user').value.trim();
+  var p = document.getElementById('inp-pass').value;
+  var found = S.users.find(function(usr){ return usr.username === u && usr.password === p; });
+  // keep backward compat for seeded admin which has no .password field
+  if (!found && u === 'admin' && p === 'admin123') found = S.users.find(function(usr){ return usr.username === 'admin'; });
+  if (found && found.role === 'admin') {
+    document.getElementById('login-error').style.display = 'none';
+    currentUser = found;
+    // Update hero greeting with logged-in username
+    S.profile.name = 'Сайн уу! ' + found.username;
+    showScreen('admin');
+  } else if (found) {
+    document.getElementById('login-error').style.display = 'block';
+    document.getElementById('login-error').textContent = 'Таны эрх хангалтгүй байна (Админ биш)!';
+  } else {
+    document.getElementById('login-error').style.display = 'block';
+    document.getElementById('login-error').textContent = 'Нэвтрэх нэр эсвэл нууц үг буруу!';
+  }
+}
+
+function doLogout() {
+  currentUser = null;
+  S.profile.name = 'Сайн уу! [Таны нэр]';
+  document.getElementById('inp-user').value = '';
+  document.getElementById('inp-pass').value = '';
+  showScreen('site');
+}
+function doRegister() {
+  var u  = document.getElementById('reg-user').value.trim();
+  var em = document.getElementById('reg-email').value.trim();
+  var p  = document.getElementById('reg-pass').value;
+  var p2 = document.getElementById('reg-pass2').value;
+  var errEl = document.getElementById('reg-error');
+  var okEl  = document.getElementById('reg-success');
+  errEl.style.display = 'none'; okEl.style.display = 'none';
+  if (!u || !em || !p || !p2) { errEl.textContent = 'Бүх талбарыг бөглөнө үү!'; errEl.style.display='block'; return; }
+  if (p !== p2) { errEl.textContent = 'Нууц үг таарахгүй байна!'; errEl.style.display='block'; return; }
+  if (S.users.find(function(usr){ return usr.username === u; })) {
+    errEl.textContent = 'Энэ нэвтрэх нэр аль хэдийн байна!'; errEl.style.display='block'; return;
+  }
+  var today = new Date(); var ds = today.getFullYear()+'-'+(today.getMonth()+1).toString().padStart(2,'0')+'-'+today.getDate().toString().padStart(2,'0');
+  S.users.push({ id: nextUserId++, username: u, email: em, password: p, role: 'user', created: ds });
+  document.getElementById('reg-user').value=''; document.getElementById('reg-email').value='';
+  document.getElementById('reg-pass').value=''; document.getElementById('reg-pass2').value='';
+  okEl.style.display = 'block';
+  setTimeout(function(){ switchAuthBox('login'); }, 1800);
+}
+
+/* ── ADMIN PAGES ───────────────────────────────────── */
+function adminPage(name, btn) {
+  document.querySelectorAll('.admin-page').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.sidebar-btn').forEach(function(b){ b.classList.remove('active'); });
+  document.getElementById('ap-' + name).classList.add('active');
+  btn.classList.add('active');
+  if (name === 'dashboard') renderDash();
+  if (name === 'skills') renderAdminSkills();
+  if (name === 'projects') renderProjTable();
+  if (name === 'menu') renderMenuTable();
+  if (name === 'messages') renderMessages();
+  if (name === 'users') renderUsersTable();
+  if (name === 'profile') loadProfileForm();
+}
+
+function renderAdminAll() {
+  renderDash();
+  renderAdminSkills();
+  renderProjTable();
+  renderMenuTable();
+  renderMessages();
+  renderUsersTable();
+  loadProfileForm();
+}
+
+/* ── DASHBOARD ─────────────────────────────────────── */
+function renderDash() {
+  document.getElementById('ds-skills').textContent   = S.skills.length;
+  document.getElementById('ds-projects').textContent = S.projects.length;
+  document.getElementById('ds-msgs').textContent     = S.messages.length;
+  document.getElementById('ds-users').textContent    = S.users.length;
+}
+
+/* ── PROFILE ───────────────────────────────────────── */
+function loadProfileForm() {
+  document.getElementById('pf-name').value   = S.profile.name;
+  document.getElementById('pf-sub').value    = S.profile.sub;
+  document.getElementById('pf-footer').value = S.profile.footer;
+  document.getElementById('prev-name').textContent = S.profile.name;
+  document.getElementById('prev-sub').textContent  = S.profile.sub;
+}
+function saveProfile() {
+  S.profile.name   = document.getElementById('pf-name').value.trim() || S.profile.name;
+  S.profile.sub    = document.getElementById('pf-sub').value.trim()  || S.profile.sub;
+  S.profile.footer = document.getElementById('pf-footer').value.trim() || S.profile.footer;
+  document.getElementById('prev-name').textContent = S.profile.name;
+  document.getElementById('prev-sub').textContent  = S.profile.sub;
+  renderSite();
+  toast('Профайл хадгалагдлаа!');
+}
+
+/* ── SKILLS ────────────────────────────────────────── */
+function renderAdminSkills() {
+  var el = document.getElementById('admin-skills-chips');
+  if (!S.skills.length) { el.innerHTML = '<span style="color:#aaa;font-size:13px">Ур чадвар байхгүй байна</span>'; return; }
+  el.innerHTML = S.skills.map(function(sk, i) {
+    return '<div class="skill-chip">' + esc(sk) +
+      '<button onclick="deleteSkill(' + i + ')">×</button></div>';
+  }).join('');
+}
+function addSkill() {
+  var val = document.getElementById('skill-input').value.trim();
+  if (!val) { toast('Ур чадвар оруулна уу!', true); return; }
+  if (S.skills.indexOf(val) >= 0) { toast('Аль хэдийн байна!', true); return; }
+  S.skills.push(val);
+  document.getElementById('skill-input').value = '';
+  renderAdminSkills();
+  renderSite();
+  toast('Ур чадвар нэмэгдлээ!');
+}
+function deleteSkill(i) {
+  S.skills.splice(i, 1);
+  renderAdminSkills();
+  renderSite();
+  toast('Устгагдлаа.');
+}
+
+/* ── PROJECTS ──────────────────────────────────────── */
+function addProject() {
+  var name = document.getElementById('proj-name').value.trim();
+  var desc = document.getElementById('proj-desc').value.trim();
+  if (!name) { toast('Нэр оруулна уу!', true); return; }
+  S.projects.push({ id: nextProjId++, name: name, desc: desc });
+  document.getElementById('proj-name').value = '';
+  document.getElementById('proj-desc').value = '';
+  renderProjTable();
+  renderSite();
+  toast('Төсөл нэмэгдлээ!');
+}
+function deleteProj(id) {
+  if (!confirm('Устгах уу?')) return;
+  S.projects = S.projects.filter(function(p){ return p.id !== id; });
+  renderProjTable();
+  renderSite();
+  toast('Устгагдлаа.');
+}
+function editProj(id) {
+  var item = S.projects.find(function(p){ return p.id === id; });
+  editState = { type:'proj', id: id };
+  document.getElementById('modal-title').textContent = 'Төсөл засах';
+  document.getElementById('modal-fields').innerHTML =
+    '<div class="form-row"><label>Нэр</label><input id="ef1" value="' + esc(item.name) + '"></div>' +
+    '<div class="form-row"><label>Тайлбар</label><textarea id="ef2" rows="3">' + esc(item.desc) + '</textarea></div>';
+  document.getElementById('modal-bg').classList.add('open');
+}
+function renderProjTable() {
+  var tb = document.getElementById('proj-tbody');
+  if (!S.projects.length) { tb.innerHTML = '<tr><td colspan="3" class="tbl-empty">Төсөл байхгүй байна</td></tr>'; return; }
+  tb.innerHTML = S.projects.map(function(p){
+    var shortDesc = p.desc.length > 40 ? p.desc.slice(0,40)+'…' : p.desc;
+    return '<tr><td>' + esc(p.name) + '</td><td>' + esc(shortDesc) + '</td><td>' +
+      '<button class="btn-tbl-edit" onclick="editProj(' + p.id + ')">Засах</button>' +
+      '<button class="btn-tbl-del" onclick="deleteProj(' + p.id + ')">Устгах</button>' +
+      '</td></tr>';
+  }).join('');
+}
+
+/* ── MENU ──────────────────────────────────────────── */
+function addMenu() {
+  var name = document.getElementById('menu-name').value.trim();
+  var url  = document.getElementById('menu-url').value.trim();
+  if (!name) { toast('Нэр оруулна уу!', true); return; }
+  if (!url)  { toast('Холбоос оруулна уу!', true); return; }
+  S.menu.push({ id: nextMenuId++, name: name, url: url });
+  document.getElementById('menu-name').value = '';
+  document.getElementById('menu-url').value = '';
+  renderMenuTable();
+  renderSite();
+  toast('Цэс нэмэгдлээ!');
+}
+function deleteMenu(id) {
+  if (!confirm('Устгах уу?')) return;
+  S.menu = S.menu.filter(function(m){ return m.id !== id; });
+  renderMenuTable();
+  renderSite();
+  toast('Устгагдлаа.');
+}
+function editMenuItem(id) {
+  var item = S.menu.find(function(m){ return m.id === id; });
+  editState = { type:'menu', id: id };
+  document.getElementById('modal-title').textContent = 'Цэс засах';
+  document.getElementById('modal-fields').innerHTML =
+    '<div class="form-row"><label>Нэр</label><input id="ef1" value="' + esc(item.name) + '"></div>' +
+    '<div class="form-row"><label>Холбоос</label><input id="ef2" value="' + esc(item.url) + '"></div>';
+  document.getElementById('modal-bg').classList.add('open');
+}
+function renderMenuTable() {
+  var tb = document.getElementById('menu-tbody');
+  if (!S.menu.length) { tb.innerHTML = '<tr><td colspan="3" class="tbl-empty">Цэс байхгүй байна</td></tr>'; return; }
+  tb.innerHTML = S.menu.map(function(m){
+    return '<tr><td>' + esc(m.name) + '</td><td>' + esc(m.url) + '</td><td>' +
+      '<button class="btn-tbl-edit" onclick="editMenuItem(' + m.id + ')">Засах</button>' +
+      '<button class="btn-tbl-del" onclick="deleteMenu(' + m.id + ')">Устгах</button>' +
+      '</td></tr>';
+  }).join('');
+}
+
+/* ── MESSAGES ──────────────────────────────────────── */
+function submitContact() {
+  var name  = document.getElementById('cf-name').value.trim();
+  var email = document.getElementById('cf-email').value.trim();
+  var msg   = document.getElementById('cf-msg').value.trim();
+  if (!name || !email || !msg) { toast('Бүх талбарыг бөглөнө үү!', true); return; }
+  S.messages.push({ name: name, email: email, body: msg });
+  document.getElementById('cf-name').value = '';
+  document.getElementById('cf-email').value = '';
+  document.getElementById('cf-msg').value = '';
+  toast('Мессеж амжилттай илгээгдлээ!');
+}
+function deleteMsg(i) {
+  S.messages.splice(i, 1);
+  renderMessages();
+  renderDash();
+}
+function renderMessages() {
+  var el = document.getElementById('msgs-list');
+  if (!S.messages.length) {
+    el.innerHTML = '<div class="msgs-empty">Мессеж байхгүй байна</div>';
+    return;
+  }
+  el.innerHTML = S.messages.map(function(m, i){
+    return '<div class="msg-card">' +
+      '<button class="msg-del" onclick="deleteMsg(' + i + ')">Устгах ×</button>' +
+      '<div class="msg-from">' + esc(m.name) + '</div>' +
+      '<div class="msg-email">' + esc(m.email) + '</div>' +
+      '<div class="msg-body">' + esc(m.body) + '</div>' +
+      '</div>';
+  }).join('');
+}
+
+/* ── MODAL ─────────────────────────────────────────── */
+function saveModal() {
+  var f1 = document.getElementById('ef1').value.trim();
+  var f2 = document.getElementById('ef2') ? document.getElementById('ef2').value.trim() : '';
+  if (!f1) { toast('Талбар хоосон байна!', true); return; }
+  if (editState.type === 'proj') {
+    var item = S.projects.find(function(p){ return p.id === editState.id; });
+    item.name = f1; item.desc = f2;
+    renderProjTable(); renderSite(); toast('Төсөл засагдлаа!');
+  } else {
+    var item = S.menu.find(function(m){ return m.id === editState.id; });
+    item.name = f1; item.url = f2;
+    renderMenuTable(); renderSite(); toast('Цэс засагдлаа!');
+  }
+  closeModal();
+}
+function closeModal() { document.getElementById('modal-bg').classList.remove('open'); }
+function closeModalOut(e) { if (e.target.id === 'modal-bg') closeModal(); }
+
+/* ── RENDER SITE ───────────────────────────────────── */
+function scrollToSection(id) {
+  var target = document.getElementById(id);
+  if (!target) return;
+  var navH = 56;
+  var top = target.getBoundingClientRect().top + window.pageYOffset - navH;
+  window.scrollTo({ top: top, behavior: 'smooth' });
+}
+
+function renderSite() {
+  // profile
+  document.getElementById('hero-title').textContent = S.profile.name;
+  document.getElementById('hero-sub').textContent   = S.profile.sub;
+  document.getElementById('footer-text').textContent = S.profile.footer;
+
+  // nav links — use scrollToSection for hash links, normal href for external
+  var nl = document.getElementById('nav-links');
+  nl.innerHTML = S.menu.map(function(m){
+    var url = m.url || '';
+    if (url.charAt(0) === '#') {
+      var secId = url.slice(1);
+      return '<a onclick="scrollToSection(\'' + secId + '\')" style="cursor:pointer">' + esc(m.name) + '</a>';
+    }
+    return '<a href="' + esc(url) + '">' + esc(m.name) + '</a>';
+  }).join('');
+
+  // skills
+  var sg = document.getElementById('site-skills-grid');
+  sg.innerHTML = S.skills.map(function(sk){
+    return '<div class="skill-tag">' + esc(sk) + '</div>';
+  }).join('');
+
+  // projects
+  var pl = document.getElementById('site-projects-list');
+  if (!S.projects.length) {
+    pl.innerHTML = '<div class="projects-empty">Төсөл байхгүй байна</div>';
+  } else {
+    pl.innerHTML = S.projects.map(function(p){
+      return '<div class="project-card"><h3>' + esc(p.name) + '</h3><p>' + esc(p.desc) + '</p></div>';
+    }).join('');
+  }
+}
+
+/* ── USERS ─────────────────────────────────────────── */
+function addUser() {
+  var u  = document.getElementById('nu-user').value.trim();
+  var em = document.getElementById('nu-email').value.trim();
+  var p  = document.getElementById('nu-pass').value;
+  var r  = document.getElementById('nu-role').value;
+  if (!u || !em || !p) { toast('Бүх талбарыг бөглөнө үү!', true); return; }
+  if (S.users.find(function(usr){ return usr.username === u; })) { toast('Нэвтрэх нэр аль хэдийн байна!', true); return; }
+  var today = new Date(); var ds = today.getFullYear()+'-'+(today.getMonth()+1).toString().padStart(2,'0')+'-'+today.getDate().toString().padStart(2,'0');
+  S.users.push({ id: nextUserId++, username: u, email: em, password: p, role: r, created: ds });
+  document.getElementById('nu-user').value=''; document.getElementById('nu-email').value='';
+  document.getElementById('nu-pass').value=''; document.getElementById('nu-role').value='user';
+  renderUsersTable();
+  toast('Хэрэглэгч нэмэгдлээ!');
+}
+function deleteUser(id) {
+  if (!confirm('Устгах уу?')) return;
+  S.users = S.users.filter(function(u){ return u.id !== id; });
+  renderUsersTable();
+  toast('Устгагдлаа.');
+}
+function toggleUserRole(id) {
+  var usr = S.users.find(function(u){ return u.id === id; });
+  if (!usr) return;
+  usr.role = usr.role === 'admin' ? 'user' : 'admin';
+  renderUsersTable();
+  toast('Эрх өөрчлөгдлөө.');
+}
+function renderUsersTable() {
+  var tb = document.getElementById('users-tbody');
+  if (!S.users.length) { tb.innerHTML = '<tr><td colspan="5" class="tbl-empty">Хэрэглэгч байхгүй байна</td></tr>'; return; }
+  tb.innerHTML = S.users.map(function(u){
+    var badge = u.role === 'admin'
+      ? '<span class="user-role-badge role-admin">Админ</span>'
+      : '<span class="user-role-badge role-user">Хэрэглэгч</span>';
+    return '<tr><td><b>' + esc(u.username) + '</b></td><td>' + esc(u.email||'—') + '</td><td>' + badge + '</td><td>' + esc(u.created||'—') + '</td><td>' +
+      '<button class="btn-tbl-edit" onclick="toggleUserRole(' + u.id + ')">Эрх өөрчлөх</button>' +
+      (u.username !== 'admin' ? '<button class="btn-tbl-del" onclick="deleteUser(' + u.id + ')">Устгах</button>' : '') +
+      '</td></tr>';
+  }).join('');
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function toast(msg, isErr) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'show' + (isErr ? ' err' : '');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.className = ''; }, 2800);
+}
+
+renderSite();
+</script>
+</body>
+</html>
