@@ -2,10 +2,10 @@ const express = require('express');
 const path = require('path');
 const app = express();
 
-// Serve static files (CSS, JS, images if you have any)
+// Serve static files (CSS, JS, images, etc.)
 app.use(express.static(__dirname));
 
-// Important: Serve your main HTML files
+// Serve HTML files
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'website.html'));
 });
@@ -14,17 +14,23 @@ app.get('/admin', (req, res) => {
   res.sendFile(path.join(__dirname, 'admin-panel.html'));
 });
 
-app.get('/website.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'website.html'));
+// Serve .html files directly
+app.get('/:filename', (req, res) => {
+  const filename = req.params.filename;
+  if (filename.endsWith('.html')) {
+    res.sendFile(path.join(__dirname, filename));
+  } else {
+    res.sendFile(path.join(__dirname, 'website.html'));
+  }
 });
 
-app.get('/admin-panel.html', (req, res) => {
-  res.sendFile(path.join(__dirname, 'admin-panel.html'));
-});
-
-// Catch-all route - return 404 for unknown paths
+// 404 handler
 app.use((req, res) => {
-  res.status(404).send('404 - Page Not Found');
+  res.status(404).send(`
+    <h1>404 - Олдсонгүй</h1>
+    <p>Хуудас олдсонгүй.</p>
+    <a href="/">Нүүр хуудас руу буцах</a>
+  `);
 });
 
 const PORT = process.env.PORT || 3000;
